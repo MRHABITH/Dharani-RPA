@@ -40,6 +40,12 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Email Automation API", version="1.1.0")
 
+@app.get("/", include_in_schema=False)
+async def root():
+    """Simple health‑check – confirms the service is up."""
+    return {"status": "ok", "message": "Automail backend is running"}
+
+
 # ── CORS ──────────────────────────────────────────────────
 # Allow all origins in dev; tighten this in production via env var
 ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "*").split(",")
