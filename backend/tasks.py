@@ -27,12 +27,25 @@ def send_email_sync(task):
 
     context = ssl.create_default_context()
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+    # Use task‑provided SMTP configuration (defaults are defined in the Pydantic model)
+    smtp_server = task.get("smtpServer", "smtp.gmail.com")
+    smtp_port = task.get("smtpPort", 587)
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls(context=ssl.create_default_context())
+            server.login(task["sender"], task["password"])
+            server.send_message(msg)
+    except Exception as e:
+        logger.error(f"SMTP send failed for task {task.get('id')}: {e}")
+        raise
+
         server.starttls(context=context)
         server.login(task["sender"], task["password"])
         server.send_message(msg)
 
 async def send_email(task):
+    # Wrapper that runs the synchronous SMTP function in a thread pool
+    await asyncio.to_thread(send_email_sync, task)
     await asyncio.to_thread(send_email_sync, task)
 
 # =========================
