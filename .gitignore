@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.pdb
+*.egg-info/
+.env
+venv/
+.venv/
+dist/
+build/
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+
+# Misc
+.DS_Store
+Thumbs.db
+*.log
+tasks.json

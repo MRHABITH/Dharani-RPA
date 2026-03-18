@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    container_name: email_automation_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist tasks.json between container restarts
+      - tasks_data:/app/data
+    environment:
+      - TASKS_FILE=/app/data/tasks.json
+      # Tighten CORS in production: ALLOWED_ORIGINS=https://yourdomain.com
+      - ALLOWED_ORIGINS=*
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  tasks_data:

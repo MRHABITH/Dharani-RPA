@@ -1,0 +1,23 @@
+services:
+  # ── Backend ────────────────────────────────────────
+  - type: web
+    name: goginix-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: https://goginix-frontend.onrender.com
+    healthCheckPath: /health
+
+  # ── Frontend ────────────────────────────────────────
+  - type: web
+    name: goginix-frontend
+    runtime: node
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npx serve dist -l $PORT
+    envVars:
+      - key: VITE_API_URL
+        value: https://goginix-backend.onrender.com
